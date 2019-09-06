@@ -1,24 +1,24 @@
 FROM ubuntu:latest
 
 RUN apt-get update
-RUN apt-get install -y wget
-RUN apt-get install -y x11vnc xvfb
+RUN apt-get install -y x11vnc xvfb unzip dos2unix
 
-RUN mkdir ~/.vnc
-RUN x11vnc -storepasswd 1358 ~/.vnc/passwd
+WORKDIR /root
+RUN mkdir .vnc
+RUN x11vnc -storepasswd 1358 .vnc/passwd
 
-RUN wget -q https://download2.interactivebrokers.com/installers/ibgateway/latest-standalone/ibgateway-latest-standalone-linux-x64.sh
-RUN chmod a+x ibgateway-latest-standalone-linux-x64.sh
-RUN yes n | ./ibgateway-latest-standalone-linux-x64.sh
+ADD https://download2.interactivebrokers.com/installers/ibgateway/latest-standalone/ibgateway-latest-standalone-linux-x64.sh install-ibgateway.sh
+RUN chmod a+x install-ibgateway.sh
+RUN yes n | ./install-ibgateway.sh
 
-RUN apt-get install -y unzip
-RUN wget -q https://github.com/IbcAlpha/IBC/releases/download/3.8.1/IBCLinux-3.8.1.zip
-RUN unzip IBCLinux-3.8.1.zip -d /opt/ibc
+ADD https://github.com/IbcAlpha/IBC/releases/download/3.8.1/IBCLinux-3.8.1.zip ibc.zip
+RUN unzip ibc.zip -d /opt/ibc
 RUN chmod a+x /opt/ibc/*.sh /opt/ibc/*/*.sh
 
-COPY ibc_config.ini /root/ibc/config.ini
+COPY ibc_config.ini ibc/config.ini
 
-CMD /opt/ibc/scripts/ibcstart.sh $(ls ~/Jts/ibgateway) --gateway --mode=paper
+COPY run.sh run.sh
+RUN dos2unix run.sh
 
-#CMD x11vnc -usepw -create -forever
+CMD ./run.sh
 EXPOSE 5900
