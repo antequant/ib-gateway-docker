@@ -13,7 +13,12 @@ RUN yes n | ./ibgateway-latest-standalone-linux-x64.sh
 
 RUN apt-get install -y unzip
 RUN wget -q https://github.com/IbcAlpha/IBC/releases/download/3.8.1/IBCLinux-3.8.1.zip
-RUN unzip IBCLinux-3.8.1.zip -d /opt/IBController
-RUN chmod a+x /opt/IBController/*.sh /opt/IBController/*/*.sh
+RUN unzip IBCLinux-3.8.1.zip -d /opt/ibc
+RUN chmod a+x /opt/ibc/*.sh /opt/ibc/*/*.sh
 
-CMD x11vnc -usepw -create -forever
+COPY ibc_config.ini /root/ibc/config.ini
+
+CMD /opt/ibc/scripts/ibcstart.sh $(ls ~/Jts/ibgateway) --gateway --mode=paper
+
+#CMD x11vnc -usepw -create -forever
+EXPOSE 5900
