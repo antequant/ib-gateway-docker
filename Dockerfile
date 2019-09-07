@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 RUN apt-get update
-RUN apt-get install -y x11vnc xvfb unzip dos2unix wget
+RUN apt-get install -y x11vnc xvfb unzip dos2unix wget socat
 
 WORKDIR /root
 RUN mkdir .vnc
@@ -19,7 +19,8 @@ COPY ibc_config.ini ibc/config.ini
 
 ENV DISPLAY :0
 ENV TRADING_MODE paper
-EXPOSE 4001 5900
+EXPOSE 4002
+EXPOSE 5900
 
 COPY run.sh run.sh
 RUN dos2unix run.sh
