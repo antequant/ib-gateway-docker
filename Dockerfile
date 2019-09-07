@@ -17,8 +17,11 @@ RUN chmod a+x /opt/ibc/*.sh /opt/ibc/*/*.sh
 
 COPY ibc_config.ini ibc/config.ini
 
+ENV DISPLAY :0
+ENV TRADING_MODE paper
+EXPOSE 5900
+
 COPY run.sh run.sh
 RUN dos2unix run.sh
 
 CMD ./run.sh
-EXPOSE 5900
