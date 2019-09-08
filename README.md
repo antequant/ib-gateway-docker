@@ -13,7 +13,7 @@ docker build . -t ib-gateway-docker
 ## Running
 
 ```sh
-docker run -it -p 4002:4002 -p 5900:5900 \
+docker run -p 4002:4002 -p 5900:5900 \
     --env TWSUSERID=YOUR_USER_ID \
     --env TWSPASSWORD=YOUR_PASSWORD \
     ib-gateway-docker:latest
