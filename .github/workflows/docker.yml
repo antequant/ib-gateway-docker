@@ -19,8 +19,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v1
+
     - name: Build Docker image
-      uses: actions/checkout@v1
       run: docker build . -t "$IMAGE_NAME"
     
     - name: Log in to GitHub Package Registry
