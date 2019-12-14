@@ -25,9 +25,11 @@ jobs:
       run: docker build . -t "$IMAGE_NAME"
     
     - name: Log in to GitHub Package Registry
+      if: github.event_name == 'push'
       run: echo "${{ secrets.GH_TOKEN }}" | docker login docker.pkg.github.com -u "$GH_USER" --password-stdin
   
     - name: Push image
+      if: github.event_name == 'push'
       run: |
         IMAGE_ID="docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME"
         VERSION=$(basename "${{ github.ref }}")
