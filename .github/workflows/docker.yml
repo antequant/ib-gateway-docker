@@ -1,0 +1,40 @@
+name: Docker
+
+on:
+  push:
+    branches:
+      - master
+    
+    tags:
+      - v*
+  
+  pull_request:
+
+env:
+  IMAGE_NAME: ib-gateway-docker
+  GH_USER: antequant-service-user
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Build Docker image
+      uses: actions/checkout@v1
+      run: docker build . -t "$IMAGE_NAME"
+    
+    - name: Log in to GitHub Package Registry
+      run: echo "${{ secrets.GH_TOKEN }}" | docker login docker.pkg.github.com -u "$GH_USER" --password-stdin
+  
+    - name: Push image
+      run: |
+        IMAGE_ID="docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME"
+        VERSION=$(basename "${{ github.ref }}")
+
+        if [ "$VERSION" == "master" ]
+        then
+          VERSION=latest
+        fi
+
+        docker tag "$IMAGE_NAME" "$IMAGE_ID:$VERSION"
+        docker push "$IMAGE_ID:$VERSION"
