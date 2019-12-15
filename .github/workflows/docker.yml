@@ -10,6 +10,10 @@ on:
   
   pull_request:
 
+env:
+  DOCKER_USER: antequantsvcuser
+  DOCKER_ORG: antequantmirror
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,15 +24,18 @@ jobs:
     - name: Build Docker image
       run: docker build . -t image
     
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "$DOCKER_USER" --password-stdin
+
     - name: Log in to GitHub Package Registry
-      if: github.event_name == 'push'
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u "${{ github.actor }}" --password-stdin
   
     - name: Push image
       if: github.event_name == 'push'
       run: |
         IMAGE_NAME=$(basename "${{ github.repository }}")
-        IMAGE_ID="docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME"
+        DH_IMAGE_ID="$DOCKER_ORG/$IMAGE_NAME"
+        GPR_IMAGE_ID="docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME"
         VERSION=$(basename "${{ github.ref }}")
 
         if [ "$VERSION" == "master" ]
@@ -36,5 +43,7 @@ jobs:
           VERSION=latest
         fi
 
-        docker tag image "$IMAGE_ID:$VERSION"
-        docker push "$IMAGE_ID:$VERSION"
+        docker tag image "$DH_IMAGE_ID:$VERSION"
+        docker tag image "$GPR_IMAGE_ID:$VERSION"
+        docker push "$DH_IMAGE_ID:$VERSION"
+        docker push "$GPR_IMAGE_ID:$VERSION"
