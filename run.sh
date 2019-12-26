@@ -3,6 +3,8 @@
 set -e
 set -o errexit
 
+rm -f /tmp/.X0-lock
+
 Xvfb :0 &
 sleep 1
 
