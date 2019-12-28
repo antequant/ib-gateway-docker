@@ -28,11 +28,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - uses: antequant/docker-push-action@v0.2
+    - uses: antequant/docker-push-action@master
       with:
         docker_server: docker.pkg.github.com
         docker_password: ${{ secrets.GITHUB_TOKEN }}
-        image_path: ${{ github.repository }}
+        image_path: docker.pkg.github.com/${{ github.repository }}
   
   dockerhub:
     name: Push to Docker Hub
@@ -41,9 +41,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - uses: antequant/docker-push-action@v0.2
+    - uses: antequant/docker-push-action@master
       with:
-        docker_server: https://index.docker.io/v1/
         docker_username: antequantsvcuser
         docker_password: ${{ secrets.DOCKER_TOKEN }}
         image_path: antequantmirror
