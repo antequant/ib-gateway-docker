@@ -41,6 +41,7 @@ jobs:
     steps:
     - uses: antequant/docker-push-action@v0.2
       with:
+        docker_server: https://index.docker.io/v1/
         docker_username: antequantsvcuser
         docker_password: ${{ secrets.DOCKER_TOKEN }}
         image_path: antequantmirror
