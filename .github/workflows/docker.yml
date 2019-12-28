@@ -28,7 +28,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - uses: antequant/docker-push-action@master
+    - uses: antequant/docker-push-action@v0.3
       with:
         docker_server: docker.pkg.github.com
         docker_password: ${{ secrets.GITHUB_TOKEN }}
@@ -41,7 +41,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - uses: antequant/docker-push-action@master
+    - uses: antequant/docker-push-action@v0.3
       with:
         docker_username: antequantsvcuser
         docker_password: ${{ secrets.DOCKER_TOKEN }}
