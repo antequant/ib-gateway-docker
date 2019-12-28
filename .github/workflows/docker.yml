@@ -24,6 +24,7 @@ jobs:
   gpr:
     name: Push to GitHub Package Registry
     if: github.event_name == 'push'
+    runs-on: ubuntu-latest
 
     steps:
     - uses: antequant/docker-push-action@v0.2
@@ -35,6 +36,7 @@ jobs:
   dockerhub:
     name: Push to Docker Hub
     if: github.event_name == 'push'
+    runs-on: ubuntu-latest
 
     steps:
     - uses: antequant/docker-push-action@v0.2
