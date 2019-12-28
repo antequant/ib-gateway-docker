@@ -10,12 +10,9 @@ on:
   
   pull_request:
 
-env:
-  DOCKER_USER: antequantsvcuser
-  DOCKER_ORG: antequantmirror
-
 jobs:
   build:
+    if: github.event_name != 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -23,27 +20,25 @@ jobs:
 
     - name: Build Docker image
       run: docker build . -t image
-    
-    - name: Log in to Docker Hub
-      run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "$DOCKER_USER" --password-stdin
 
-    - name: Log in to GitHub Package Registry
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u "${{ github.actor }}" --password-stdin
+  gpr:
+    name: Push to GitHub Package Registry
+    if: github.event_name == 'push'
+
+    steps:
+    - uses: antequant/docker-push-action@v0.2
+      with:
+        docker_server: docker.pkg.github.com
+        docker_password: ${{ secrets.GITHUB_TOKEN }}
+        image_path: ${{ github.repository }}
   
-    - name: Push image
-      if: github.event_name == 'push'
-      run: |
-        IMAGE_NAME=$(basename "${{ github.repository }}")
-        DH_IMAGE_ID="$DOCKER_ORG/$IMAGE_NAME"
-        GPR_IMAGE_ID="docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME"
-        VERSION=$(basename "${{ github.ref }}")
+  dockerhub:
+    name: Push to Docker Hub
+    if: github.event_name == 'push'
 
-        if [ "$VERSION" == "master" ]
-        then
-          VERSION=latest
-        fi
-
-        docker tag image "$DH_IMAGE_ID:$VERSION"
-        docker tag image "$GPR_IMAGE_ID:$VERSION"
-        docker push "$DH_IMAGE_ID:$VERSION"
-        docker push "$GPR_IMAGE_ID:$VERSION"
+    steps:
+    - uses: antequant/docker-push-action@v0.2
+      with:
+        docker_username: antequantsvcuser
+        docker_password: ${{ secrets.DOCKER_TOKEN }}
+        image_path: antequantmirror
